@@ -23,14 +23,14 @@ pub trait AxArchPerCpu: Sized {
 /// Recommended usage:
 /// - Define a per-CPU state in hypervisor:
 ///
-///   ```rust
+///   ```ignore
 ///   #[percpu::def_percpu]
-///   pub static AXVM_PER_CPU: AxPerCpu<MyHal> = AxPerCpu::new_uninit();
+///   pub static AXVM_PER_CPU: AxPerCpu<MyArchPerCpuImpl> = AxPerCpu::new_uninit();
 ///   ```
 ///
 /// - Then initialize and enable virtualization on each CPU in the hypervisor initialization code:
 ///
-///   ```rust
+///   ```ignore
 ///   let percpu = unsafe {
 ///       AXVM_PER_CPU.current_ref_mut_raw()
 ///   };
