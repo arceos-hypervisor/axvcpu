@@ -43,6 +43,17 @@ impl From<AccessWidth> for usize {
     }
 }
 
+impl From<&AccessWidth> for usize {
+    fn from(width: &AccessWidth) -> usize {
+        match width {
+            AccessWidth::Byte => 1,
+            AccessWidth::Word => 2,
+            AccessWidth::Dword => 4,
+            AccessWidth::Qword => 8,
+        }
+    }
+}
+
 /// The port number of an I/O operation.
 type Port = u16;
 
@@ -64,6 +75,9 @@ pub enum AxVCpuExitReason {
         addr: GuestPhysAddr,
         /// The width of the MMIO read.
         width: AccessWidth,
+        /// dst read reg idx
+        reg: usize,
+        reg_width: AccessWidth,
     },
     /// The instruction executed by the vcpu performs a MMIO write operation.
     MmioWrite {
@@ -72,7 +86,7 @@ pub enum AxVCpuExitReason {
         /// The width of the MMIO write.
         width: AccessWidth,
         /// The data to be written.
-        data: u64,
+        data: usize,
     },
     /// The instruction executed by the vcpu performs a I/O read operation.
     ///

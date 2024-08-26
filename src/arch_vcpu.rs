@@ -34,4 +34,6 @@ pub trait AxArchVCpu: Sized {
     fn bind(&mut self) -> AxResult;
     /// Unbind the vcpu from the current physical CPU.
     fn unbind(&mut self) -> AxResult;
+    /// set general register val
+    fn set_gpr(&mut self, reg: usize, val: usize);
 }
