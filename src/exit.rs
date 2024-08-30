@@ -64,9 +64,9 @@ pub enum AxVCpuExitReason {
         addr: GuestPhysAddr,
         /// The width of the MMIO read.
         width: AccessWidth,
-        /// dst read reg idx
+        /// The index of reg to be read
         reg: usize,
-        /// dst red reg width
+        /// The width of the reg to be read
         reg_width: AccessWidth,
     },
     /// The instruction executed by the vcpu performs a MMIO write operation.
@@ -76,7 +76,7 @@ pub enum AxVCpuExitReason {
         /// The width of the MMIO write.
         width: AccessWidth,
         /// The data to be written.
-        data: usize,
+        data: u64,
     },
     /// The instruction executed by the vcpu performs a I/O read operation.
     ///
@@ -103,7 +103,7 @@ pub enum AxVCpuExitReason {
     /// Note that fields may be added in the future, use `..` to handle them.
     ExternalInterrupt {
         /// The interrupt vector.
-        vector: u8,
+        vector: u64,
     },
     /// A nested page fault happened. (EPT violation in x86)
     ///
