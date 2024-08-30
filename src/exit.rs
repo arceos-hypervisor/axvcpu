@@ -66,6 +66,7 @@ pub enum AxVCpuExitReason {
         width: AccessWidth,
         /// dst read reg idx
         reg: usize,
+        /// dst red reg width
         reg_width: AccessWidth,
     },
     /// The instruction executed by the vcpu performs a MMIO write operation.
