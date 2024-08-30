@@ -43,7 +43,6 @@ impl From<AccessWidth> for usize {
     }
 }
 
-
 /// The port number of an I/O operation.
 type Port = u16;
 
