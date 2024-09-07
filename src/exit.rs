@@ -50,7 +50,7 @@ impl AccessWidth {
     }
 
     /// Returns the range of bits that the access covers.
-    pub fn bits_range(&self) -> std::ops::Range<usize> {
+    pub fn bits_range(&self) -> core::ops::Range<usize> {
         match self {
             AccessWidth::Byte => 0..8,
             AccessWidth::Word => 0..16,
