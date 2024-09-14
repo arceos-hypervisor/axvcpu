@@ -8,5 +8,6 @@ edition = "2021"
 axerrno = "0.1.0"
 memory_addr = "0.2.0"
 percpu = "0.1.4"
+timer_list = "0.1.0"
 
 axaddrspace = { git = "https://github.com/arceos-hypervisor/axaddrspace.git" }
