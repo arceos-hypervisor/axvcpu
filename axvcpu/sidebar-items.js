@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["AccessWidth","AxVCpuExitReason","VCpuState"],"fn":["clear_current_vcpu","get_current_vcpu","get_current_vcpu_mut","set_current_vcpu"],"struct":["AxPerCpu","AxVCpu","AxVCpuInnerMut"],"trait":["AxArchPerCpu","AxArchVCpu"]};
