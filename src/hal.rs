@@ -43,7 +43,7 @@ pub trait AxVCpuHal {
     /// # Returns
     ///
     /// * `usize` - The current IRQ number.
-    fn irq_fecth() -> usize {
+    fn irq_fetch() -> usize {
         0
     }
 
