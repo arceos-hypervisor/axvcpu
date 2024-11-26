@@ -95,6 +95,20 @@ pub enum AxVCpuExitReason {
         /// The data to be written.
         data: u64,
     },
+    SysRegRead {
+        /// The address of the system register read.
+        addr: usize,
+        /// The system register number.
+        reg: usize,
+    },
+    SysRegWrite {
+        /// The address of the system register write.
+        addr: usize,
+        /// The system register number.
+        reg: usize,
+        /// The data to be written.
+        value: u64,
+    },
     /// The instruction executed by the vcpu performs a I/O read operation.
     ///
     /// It's unnecessary to specify the destination register because it's always `al`, `ax`, or `eax` (as port-I/O exists only in x86).
