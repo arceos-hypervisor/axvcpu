@@ -96,13 +96,13 @@ pub enum AxVCpuExitReason {
         data: u64,
     },
     /// The instruction executed by the vcpu performs a system register read operation.
-    /// 
+    ///
     /// System register here refers `MSR`s in x86, `CSR`s in RISC-V, and `System registers` in Aarch64.
     SysRegRead {
         /// The address of the system register to be read.
         ///
         /// Under x86_64 and RISC-V, this field is the address.
-        /// 
+        ///
         /// Under Aarch64, this field follows the ESR_EL2.ISS format: `<op0><op2><op1><CRn>00000<CRm>0`,
         /// which is consistent with the numbering scheme in the `aarch64_sysreg` crate.
         addr: usize,
@@ -110,13 +110,13 @@ pub enum AxVCpuExitReason {
         reg: usize,
     },
     /// The instruction executed by the vcpu performs a system register write operation.
-    /// 
+    ///
     /// System register here refers `MSR`s in x86, `CSR`s in RISC-V, and `System registers` in Aarch64.
     SysRegWrite {
         /// The address of the system register to be written.
-        /// 
+        ///
         /// Under x86_64 and RISC-V, this field is the address.
-        /// 
+        ///
         /// Under Aarch64, this field follows the ESR_EL2.ISS format: `<op0><op2><op1><CRn>00000<CRm>0`,
         /// which is consistent with the numbering scheme in the `aarch64_sysreg` crate.
         addr: usize,
