@@ -233,6 +233,11 @@ impl<A: AxArchVCpu> AxVCpu<A> {
     pub fn set_gpr(&self, reg: usize, val: usize) {
         self.get_arch_vcpu().set_gpr(reg, val);
     }
+
+    /// Inject an interrupt to the vcpu.
+    pub fn inject_interrupt(&self, vector: usize) -> AxResult {
+        self.get_arch_vcpu().inject_interrupt(vector)
+    }
 }
 
 #[percpu::def_percpu]

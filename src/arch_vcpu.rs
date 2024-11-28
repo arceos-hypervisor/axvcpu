@@ -41,4 +41,11 @@ pub trait AxArchVCpu: Sized {
 
     /// Set the value of a general-purpose register according to the given index.
     fn set_gpr(&mut self, reg: usize, val: usize);
+
+    /// Inject an interrupt to the vcpu.
+    ///
+    /// Note that some architectures may require a virtual interrupt controller to inject an interrupt. 
+    /// Under such circumstances, a closure referring to the virtual interrupt controller should be
+    /// passed to the [`AxArchVCpu`] during setup.
+    fn inject_interrupt(&mut self, vector: usize) -> AxResult;
 }
