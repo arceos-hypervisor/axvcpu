@@ -11,9 +11,14 @@ pub trait AxArchVCpu: Sized {
     type CreateConfig;
     /// The configuration for setting up a created [`AxArchVCpu`]. Used by [`AxArchVCpu::setup`].
     type SetupConfig;
+    /// The configuration for creating a new [`AxArchVCpu`] for host VM. Used by [`AxArchVCpu::new_host`] in type 1.5 scenario.
+    type HostConfig;
 
     /// Create a new `AxArchVCpu`.
     fn new(config: Self::CreateConfig) -> AxResult<Self>;
+
+    /// Create a new `AxArchVCpu` for host VM.
+    fn new_host(config: Self::HostConfig) -> AxResult<Self>;
 
     /// Set the entry point of the vcpu.
     ///

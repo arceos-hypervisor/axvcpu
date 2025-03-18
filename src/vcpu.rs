@@ -235,6 +235,23 @@ impl<A: AxArchVCpu> AxVCpu<A> {
     }
 }
 
+impl<A: AxArchVCpu> AxVCpu<A> {
+    /// Create a new [`AxVCpu`] for host VM.
+    pub fn new_host(id: usize, ctx: A::HostConfig, phys_cpu_set: Option<usize>) -> AxResult<Self> {
+        Ok(Self {
+            inner_const: AxVCpuInnerConst {
+                id,
+                favor_phys_cpu: 0,
+                phys_cpu_set,
+            },
+            inner_mut: RefCell::new(AxVCpuInnerMut {
+                state: VCpuState::Created,
+            }),
+            arch_vcpu: UnsafeCell::new(A::new_host(ctx)?),
+        })
+    }
+}
+
 #[percpu::def_percpu]
 static mut CURRENT_VCPU: Option<*mut u8> = None;
 
