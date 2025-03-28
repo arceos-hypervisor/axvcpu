@@ -1,4 +1,6 @@
-use axaddrspace::{GuestPhysAddr, HostPhysAddr};
+use page_table_multiarch::{MappingFlags, PageSize};
+
+use axaddrspace::{GuestPhysAddr, GuestVirtAddr, HostPhysAddr};
 use axerrno::AxResult;
 
 use crate::exit::AxVCpuExitReason;
@@ -6,7 +8,7 @@ use crate::exit::AxVCpuExitReason;
 /// A trait for architecture-specific vcpu.
 ///
 /// This trait is an abstraction for virtual CPUs of different architectures.
-pub trait AxArchVCpu: Sized {
+pub trait AxArchVCpu: Sized + AxVcpuAccessGuestState {
     /// The configuration for creating a new [`AxArchVCpu`]. Used by [`AxArchVCpu::new`].
     type CreateConfig;
     /// The configuration for setting up a created [`AxArchVCpu`]. Used by [`AxArchVCpu::setup`].
@@ -46,4 +48,27 @@ pub trait AxArchVCpu: Sized {
 
     /// Set the value of a general-purpose register according to the given index.
     fn set_gpr(&mut self, reg: usize, val: usize);
+}
+
+pub trait AxVcpuAccessGuestState {
+    fn read_gpr(&self, reg: usize) -> usize;
+    fn write_gpr(&mut self, reg: usize, val: usize);
+
+    fn instr_pointer(&self) -> usize;
+    fn set_instr_pointer(&mut self, val: usize);
+
+    fn stack_pointer(&self) -> usize;
+    fn set_stack_pointer(&mut self, val: usize);
+
+    fn frame_pointer(&self) -> usize;
+    fn set_frame_pointer(&mut self, val: usize);
+
+    fn return_value(&self) -> usize;
+    fn set_return_value(&mut self, val: usize);
+
+    fn guest_is_privileged(&self) -> bool;
+    fn guest_page_table_query(
+        &self,
+        gva: GuestVirtAddr,
+    ) -> Option<(GuestPhysAddr, MappingFlags, PageSize)>;
 }
