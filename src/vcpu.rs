@@ -233,6 +233,11 @@ impl<A: AxArchVCpu> AxVCpu<A> {
     pub fn set_gpr(&self, reg: usize, val: usize) {
         self.get_arch_vcpu().set_gpr(reg, val);
     }
+
+    /// Set the return value of the vcpu.
+    pub fn set_return_value(&self, ret: usize) {
+        self.get_arch_vcpu().set_return_value(ret);
+    }
 }
 
 impl<A: AxArchVCpu> AxVCpu<A> {
