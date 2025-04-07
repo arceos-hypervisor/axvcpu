@@ -54,6 +54,14 @@ pub trait AxArchVCpu: Sized + AxVcpuAccessGuestState {
 }
 
 pub trait AxVcpuAccessGuestState {
+    /// The type of the general-purpose registers.
+    /// This type should be a struct that contains the general-purpose registers of the architecture.
+    /// TODO: maybe we can seperate this into a independent crate.
+    type GeneralRegisters;
+
+    fn regs(&self) -> &Self::GeneralRegisters;
+    fn regs_mut(&mut self) -> &mut Self::GeneralRegisters;
+
     fn read_gpr(&self, reg: usize) -> usize;
     fn write_gpr(&mut self, reg: usize, val: usize);
 
