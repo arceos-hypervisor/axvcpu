@@ -22,8 +22,8 @@ pub trait AxArchVCpu: Sized + AxVcpuAccessGuestState {
     /// Create a new `AxArchVCpu` for host VM.
     fn new_host(config: Self::HostConfig) -> AxResult<Self>;
 
-    /// Construct a new `HostConfig` for current vcpu state.
-    fn load_host(&self) -> AxResult<Self::HostConfig>;
+    /// Load current vcpu state into a pre-constructed `HostConfig` structure.
+    fn load_host(&self, config: &mut Self::HostConfig) -> AxResult;
 
     /// Set the entry point of the vcpu.
     ///
