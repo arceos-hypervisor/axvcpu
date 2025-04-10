@@ -1,4 +1,6 @@
-use axaddrspace::{GuestPhysAddr, HostPhysAddr};
+use page_table_multiarch::{MappingFlags, PageSize};
+
+use axaddrspace::{GuestPhysAddr, GuestVirtAddr, HostPhysAddr};
 use axerrno::AxResult;
 
 use crate::exit::AxVCpuExitReason;
@@ -6,14 +8,22 @@ use crate::exit::AxVCpuExitReason;
 /// A trait for architecture-specific vcpu.
 ///
 /// This trait is an abstraction for virtual CPUs of different architectures.
-pub trait AxArchVCpu: Sized {
+pub trait AxArchVCpu: Sized + AxVcpuAccessGuestState {
     /// The configuration for creating a new [`AxArchVCpu`]. Used by [`AxArchVCpu::new`].
     type CreateConfig;
     /// The configuration for setting up a created [`AxArchVCpu`]. Used by [`AxArchVCpu::setup`].
     type SetupConfig;
+    /// The configuration for creating a new [`AxArchVCpu`] for host VM. Used by [`AxArchVCpu::new_host`] in type 1.5 scenario.
+    type HostConfig;
 
     /// Create a new `AxArchVCpu`.
     fn new(config: Self::CreateConfig) -> AxResult<Self>;
+
+    /// Create a new `AxArchVCpu` for host VM.
+    fn new_host(config: Self::HostConfig) -> AxResult<Self>;
+
+    /// Load current vcpu state into a pre-constructed `HostConfig` structure.
+    fn load_host(&self, config: &mut Self::HostConfig) -> AxResult;
 
     /// Set the entry point of the vcpu.
     ///
@@ -41,4 +51,39 @@ pub trait AxArchVCpu: Sized {
 
     /// Set the value of a general-purpose register according to the given index.
     fn set_gpr(&mut self, reg: usize, val: usize);
+}
+
+pub trait AxVcpuAccessGuestState {
+    /// The type of the general-purpose registers.
+    /// This type should be a struct that contains the general-purpose registers of the architecture.
+    /// TODO: maybe we can seperate this into a independent crate.
+    type GeneralRegisters;
+
+    fn regs(&self) -> &Self::GeneralRegisters;
+    fn regs_mut(&mut self) -> &mut Self::GeneralRegisters;
+
+    fn read_gpr(&self, reg: usize) -> usize;
+    fn write_gpr(&mut self, reg: usize, val: usize);
+
+    fn instr_pointer(&self) -> usize;
+    fn set_instr_pointer(&mut self, val: usize);
+
+    fn stack_pointer(&self) -> usize;
+    fn set_stack_pointer(&mut self, val: usize);
+
+    fn frame_pointer(&self) -> usize;
+    fn set_frame_pointer(&mut self, val: usize);
+
+    fn return_value(&self) -> usize;
+    fn set_return_value(&mut self, val: usize);
+
+    fn guest_is_privileged(&self) -> bool;
+    fn guest_page_table_query(
+        &self,
+        gva: GuestVirtAddr,
+    ) -> Option<(GuestPhysAddr, MappingFlags, PageSize)>;
+
+    fn append_eptp_list(&mut self, idx: usize, eptp: HostPhysAddr) -> AxResult;
+    fn remove_eptp_list_entry(&mut self, idx: usize) -> AxResult;
+    fn get_eptp_list_entry(&self, idx: usize) -> AxResult<HostPhysAddr>;
 }
