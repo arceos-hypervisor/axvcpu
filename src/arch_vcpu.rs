@@ -13,17 +13,14 @@ pub trait AxArchVCpu: Sized + AxVcpuAccessGuestState {
     type CreateConfig;
     /// The configuration for setting up a created [`AxArchVCpu`]. Used by [`AxArchVCpu::setup`].
     type SetupConfig;
-    /// The configuration for creating a new [`AxArchVCpu`] for host VM. Used by [`AxArchVCpu::new_host`] in type 1.5 scenario.
-    type HostConfig;
+    /// The configuration for setting up a new [`AxArchVCpu`] for host VM. Used by [`AxArchVCpu::setup_from_context`] in type 1.5 scenario.
+    type HostContext;
 
     /// Create a new `AxArchVCpu`.
     fn new(config: Self::CreateConfig) -> AxResult<Self>;
 
-    /// Create a new `AxArchVCpu` for host VM.
-    fn new_host(config: Self::HostConfig) -> AxResult<Self>;
-
-    /// Load current vcpu state into a pre-constructed `HostConfig` structure.
-    fn load_host(&self, config: &mut Self::HostConfig) -> AxResult;
+    /// Load current vcpu state into a pre-constructed `HostContext` structure.
+    fn load_context(&self, config: &mut Self::HostContext) -> AxResult;
 
     /// Set the entry point of the vcpu.
     ///
@@ -39,6 +36,9 @@ pub trait AxArchVCpu: Sized + AxVcpuAccessGuestState {
     ///
     /// It's guaranteed that this function is called only once, after [`AxArchVCpu::set_entry`] and [`AxArchVCpu::set_ept_root`] being called.
     fn setup(&mut self, config: Self::SetupConfig) -> AxResult;
+
+    /// Setup the vcpu from a pre-constructed `HostContext` structure.
+    fn setup_from_context(&mut self, config: Self::HostContext) -> AxResult;
 
     /// Run the vcpu until a vm-exit occurs.
     fn run(&mut self) -> AxResult<AxVCpuExitReason>;
