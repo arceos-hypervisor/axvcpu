@@ -1,4 +1,7 @@
-use axaddrspace::{device::{AccessWidth, Port, SysRegAddr}, GuestPhysAddr, MappingFlags};
+use axaddrspace::{
+    GuestPhysAddr, MappingFlags,
+    device::{AccessWidth, Port, SysRegAddr},
+};
 
 #[allow(unused_imports)] // used in doc
 use super::AxArchVCpu;
@@ -47,7 +50,7 @@ pub enum AxVCpuExitReason {
         /// which is consistent with the numbering scheme in the `aarch64_sysreg` crate.
         addr: SysRegAddr,
         /// The index of the GPR (general purpose register) where the value should be stored.
-        /// 
+        ///
         /// Note that in x86_64, the destination register is always [edx:eax], so this field is unused.
         reg: usize,
     },
