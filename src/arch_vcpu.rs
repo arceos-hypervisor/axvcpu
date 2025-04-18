@@ -83,7 +83,8 @@ pub trait AxVcpuAccessGuestState {
         gva: GuestVirtAddr,
     ) -> Option<(GuestPhysAddr, MappingFlags, PageSize)>;
 
-    fn append_eptp_list(&mut self, idx: usize, eptp: HostPhysAddr) -> AxResult;
-    fn remove_eptp_list_entry(&mut self, idx: usize) -> AxResult;
-    fn get_eptp_list_entry(&self, idx: usize) -> AxResult<HostPhysAddr>;
+    /// Get the current EPT root entry.
+    /// Todo: get entry type instead of the raw address.
+    fn current_ept_root(&self) -> HostPhysAddr;
+    fn eptp_list_region(&self) -> HostPhysAddr;
 }
