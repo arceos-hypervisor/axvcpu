@@ -64,6 +64,11 @@ impl<A: AxArchPerCpu> AxPerCpu<A> {
         }
     }
 
+    /// Return the CPU id, or `None` if the per-CPU state is not initialized.
+    pub fn cpu_id(&self) -> Option<usize> {
+        self.cpu_id
+    }
+
     /// Return the architecture-specific per-CPU state. Panics if the per-CPU state is not initialized.
     pub fn arch_checked(&self) -> &A {
         assert!(self.cpu_id.is_some(), "per-CPU state is not initialized");
