@@ -87,4 +87,6 @@ pub trait AxVcpuAccessGuestState {
     /// Todo: get entry type instead of the raw address.
     fn current_ept_root(&self) -> HostPhysAddr;
     fn eptp_list_region(&self) -> HostPhysAddr;
+
+    fn dump(&self);
 }
