@@ -1,6 +1,7 @@
 use page_table_multiarch::{MappingFlags, PageSize};
 
 use axaddrspace::{GuestPhysAddr, GuestVirtAddr, HostPhysAddr};
+use axaddrspace::npt::EPTPointer;
 use axerrno::AxResult;
 
 use crate::exit::AxVCpuExitReason;
@@ -83,9 +84,8 @@ pub trait AxVcpuAccessGuestState {
         gva: GuestVirtAddr,
     ) -> Option<(GuestPhysAddr, MappingFlags, PageSize)>;
 
-    /// Get the current EPT root entry.
-    /// Todo: get entry type instead of the raw address.
-    fn current_ept_root(&self) -> HostPhysAddr;
+    /// Get the current EPT pointer.
+    fn ept_pointer(&self) -> EPTPointer;
     fn eptp_list_region(&self) -> HostPhysAddr;
 
     fn dump(&self);
