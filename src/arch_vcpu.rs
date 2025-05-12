@@ -44,9 +44,9 @@ pub trait AxArchVCpu: Sized {
 
     /// Inject an interrupt to the vcpu.
     ///
-    /// It's guaranteed (for implementors, and required for callers) that this function is called 
+    /// It's guaranteed (for implementors, and required for callers) that this function is called
     /// on the physical CPU where the vcpu is running or queueing.
-    /// 
+    ///
     /// It's not guaranteed that the vcpu is running or bound to the current physical CPU when this
     /// function is called. It means sometimes an irq queue is necessary to buffer the interrupts
     /// until the vcpu is running.
