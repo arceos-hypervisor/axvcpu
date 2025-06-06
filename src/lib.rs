@@ -18,4 +18,4 @@ pub use percpu::*;
 pub use vcpu::*;
 
 // TODO: consider, should [`AccessWidth`] be moved to a new crate?
-pub use exit::{AccessWidth, AxVCpuExitReason};
+pub use exit::AxVCpuExitReason;
