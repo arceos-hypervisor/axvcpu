@@ -1,5 +1,5 @@
-use axaddrspace::{GuestPhysAddr, MappingFlags};
 use axaddrspace::device::AccessWidth;
+use axaddrspace::{GuestPhysAddr, MappingFlags};
 
 #[allow(unused_imports)] // used in doc
 use super::AxArchVCpu;
