@@ -98,6 +98,14 @@ impl<A: AxArchVCpu> AxVCpu<A> {
         })
     }
 
+    pub fn setup_from_context(&self, ept_root: HostPhysAddr, ctx: A::HostContext) -> AxResult {
+        self.manipulate_arch_vcpu(VCpuState::Created, VCpuState::Free, |arch_vcpu| {
+            arch_vcpu.set_ept_root(ept_root)?;
+            arch_vcpu.setup_from_context(ctx)?;
+            Ok(())
+        })
+    }
+
     /// Get the id of the vcpu.
     pub const fn id(&self) -> usize {
         self.inner_const.id
@@ -232,6 +240,11 @@ impl<A: AxArchVCpu> AxVCpu<A> {
     /// Sets the value of a general-purpose register according to the given index.
     pub fn set_gpr(&self, reg: usize, val: usize) {
         self.get_arch_vcpu().set_gpr(reg, val);
+    }
+
+    /// Set the return value of the vcpu.
+    pub fn set_return_value(&self, ret: usize) {
+        self.get_arch_vcpu().set_return_value(ret);
     }
 }
 

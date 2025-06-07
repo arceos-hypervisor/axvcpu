@@ -12,7 +12,7 @@ mod hal;
 mod percpu;
 mod vcpu;
 
-pub use arch_vcpu::AxArchVCpu;
+pub use arch_vcpu::{AxArchVCpu, AxVcpuAccessGuestState};
 pub use hal::AxVCpuHal;
 pub use percpu::*;
 pub use vcpu::*;

@@ -2,30 +2,8 @@ use axaddrspace::{HostPhysAddr, HostVirtAddr};
 
 /// The interfaces which the underlying software (kernel or hypervisor) must implement.
 pub trait AxVCpuHal {
-    /// Allocates a frame and returns its host physical address.
-    ///
-    /// # Returns
-    ///
-    /// * `Option<HostPhysAddr>` - Some containing the physical address of the allocated frame, or None if allocation fails.
-    fn alloc_frame() -> Option<HostPhysAddr>;
-
-    /// Deallocates a frame given its physical address.
-    ///
-    /// # Parameters
-    ///
-    /// * `paddr` - The physical address of the frame to deallocate.
-    fn dealloc_frame(paddr: HostPhysAddr);
-
-    /// Converts a host physical address to a host virtual address.
-    ///
-    /// # Parameters
-    ///
-    /// * `paddr` - The physical address to convert.
-    ///
-    /// # Returns
-    ///
-    /// * `HostVirtAddr` - The corresponding virtual address.
-    fn phys_to_virt(paddr: HostPhysAddr) -> HostVirtAddr;
+    type EPTTranslator: axaddrspace::EPTTranslator;
+    type PagingHandler: page_table_multiarch::PagingHandler;
 
     /// Converts a host virtual address to a host physical address.
     ///
