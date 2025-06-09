@@ -35,10 +35,17 @@ jobs:
       - name: Clippy for the default target
         if: ${{ matrix.arch == 'x86_64' }}
         continue-on-error: ${{ matrix.rust-toolchain == 'nightly' }}
-        run: make clippy
+        run: cargo clippy --all-targets --all-features -- -D warnings
       - name: Clippy for ${{ matrix.arch }}
         continue-on-error: ${{ matrix.rust-toolchain == 'nightly' }}
-        run: make clippy ARCH=${{ matrix.arch }}
+        run: |
+          if [ "${{ matrix.arch }}" = "x86_64" ]; then
+            cargo clippy --target x86_64-unknown-none --all-features -- -D warnings
+          elif [ "${{ matrix.arch }}" = "riscv64" ]; then
+            cargo clippy --target riscv64gc-unknown-none-elf --all-features -- -D warnings
+          elif [ "${{ matrix.arch }}" = "aarch64" ]; then
+            cargo clippy --target aarch64-unknown-none-softfloat --all-features -- -D warnings
+          fi
 
   ci:
     runs-on: ubuntu-latest
