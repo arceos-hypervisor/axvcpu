@@ -100,3 +100,4 @@ jobs:
         single-commit: true
         branch: gh-pages
         folder: target/doc
+        
