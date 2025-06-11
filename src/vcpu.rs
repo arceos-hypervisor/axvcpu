@@ -238,6 +238,11 @@ impl<A: AxArchVCpu> AxVCpu<A> {
     pub fn inject_interrupt(&self, vector: usize) -> AxResult {
         self.get_arch_vcpu().inject_interrupt(vector)
     }
+
+    /// Sets the return value of the vcpu.
+    pub fn set_return_value(&self, val: usize) {
+        self.get_arch_vcpu().set_return_value(val);
+    }
 }
 
 #[percpu::def_percpu]

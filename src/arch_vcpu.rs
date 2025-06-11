@@ -51,4 +51,7 @@ pub trait AxArchVCpu: Sized {
     /// function is called. It means sometimes an irq queue is necessary to buffer the interrupts
     /// until the vcpu is running.
     fn inject_interrupt(&mut self, vector: usize) -> AxResult;
+
+    /// Set return value of the vcpu.
+    fn set_return_value(&mut self, val: usize);
 }
