@@ -152,4 +152,18 @@ pub enum AxVCpuExitReason {
         /// Architecture related VM entry failure reasons.
         hardware_entry_failure_reason: u64,
     },
+    /// The vcpu is trying to send an Inter-Processor Interrupt (IPI) to another CPU.
+    /// 
+    /// This does not include SIPI, which is handled by [`AxVCpuExitReason::CpuUp`].
+    SendIPI {
+        /// Specifies whether the IPI should be sent to all CPUs except the current one.
+        send_to_all: bool,
+        /// Specifies whether the IPI should be sent to the current CPU.
+        send_to_self: bool,
+        /// The target CPU to send the IPI to. Invalid if any of `send_to_all` or `send_to_self` is
+        /// true.
+        target_cpu: u64,
+        /// The IPI vector to be sent.
+        vector: u64,
+    }
 }
