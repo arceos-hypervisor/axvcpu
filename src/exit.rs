@@ -207,4 +207,12 @@ pub enum AxVCpuExitReason {
         /// Architecture related VM entry failure reasons.
         hardware_entry_failure_reason: u64,
     },
+    /// x86_64 use only.
+    /// The guest is executing a `VMFUNC` instruction, which is used to switch the EPTP (Extended Page Table Pointer).
+    /// Generally, `VMFUNC` will not cause a VM exit, but if the target EPTP is not valid or the instruction is not supported,
+    /// it will cause a VM exit with this reason.
+    EPTPSwitch {
+        /// The new EPTP (Extended Page Table Pointer) to switch to.
+        index: usize,
+    },
 }

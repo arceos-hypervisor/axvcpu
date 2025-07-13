@@ -1,7 +1,7 @@
 use page_table_multiarch::{MappingFlags, PageSize};
 
-use axaddrspace::{GuestPhysAddr, GuestVirtAddr, HostPhysAddr};
 use axaddrspace::npt::EPTPointer;
+use axaddrspace::{GuestPhysAddr, GuestVirtAddr, HostPhysAddr};
 use axerrno::AxResult;
 
 use crate::exit::AxVCpuExitReason;
@@ -86,6 +86,8 @@ pub trait AxVcpuAccessGuestState {
 
     /// Get the current EPT pointer.
     fn ept_pointer(&self) -> EPTPointer;
+    // Set the EPT pointer.
+    fn set_ept_pointer(&mut self, eptp: EPTPointer) -> AxResult;
     fn eptp_list_region(&self) -> HostPhysAddr;
 
     fn dump(&self);
