@@ -9,5 +9,5 @@ axerrno = "0.1.0"
 memory_addr = "0.4"
 percpu = "0.2.0"
 
-axaddrspace = { git = "https://github.com/arceos-hypervisor/axaddrspace.git" }
-axvisor_api = { git = "https://github.com/arceos-hypervisor/axvisor_api.git" }
+axaddrspace = "0.1"
+axvisor_api = "0.1"
