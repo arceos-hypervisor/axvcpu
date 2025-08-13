@@ -6,67 +6,102 @@ use axvisor_api::vmm::{VCpuId, VMId};
 
 use super::{AxArchVCpu, AxVCpuExitReason};
 
-/// The constant part of `AxVCpu`.
+/// Immutable configuration data for a virtual CPU.
+///
+/// This structure contains the constant properties of a vCPU that don't change
+/// after creation, such as CPU affinity settings and identifiers.
 struct AxVCpuInnerConst {
-    /// The id of the VM this vcpu belongs to.
+    /// Unique identifier of the VM this vCPU belongs to
     vm_id: VMId,
-    /// The id of the vcpu.
+    /// Unique identifier of this vCPU within its VM
     vcpu_id: VCpuId,
-    /// The id of the physical CPU who has the priority to run this vcpu.
+    /// Physical CPU ID that has priority to run this vCPU
+    /// Used for CPU affinity optimization
     favor_phys_cpu: usize,
-    /// The set of physical CPUs who can run this vcpu.
-    /// If `None`, the vcpu can run on any physical CPU.
-    /// Refer to [CPU_SET](https://man7.org/linux/man-pages/man3/CPU_SET.3.html) in Linux.
+    /// Bitmask of physical CPUs that can run this vCPU
+    /// If `None`, the vCPU can run on any available physical CPU
+    /// Similar to Linux CPU_SET functionality
     phys_cpu_set: Option<usize>,
 }
 
-/// The state of a virtual CPU.
+/// Represents the current execution state of a virtual CPU.
+///
+/// The vCPU follows a strict state machine:
+/// Created → Free → Ready → Running
+///
+/// Invalid state is used when errors occur during state transitions.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum VCpuState {
-    /// An invalid state.
+    /// Invalid state - indicates an error occurred during state transition
     Invalid = 0,
-    /// The vcpu is created but not initialized yet.
+    /// Initial state after vCPU creation, not yet initialized
     Created = 1,
-    /// The vcpu is already initialized and can be bound to a physical CPU.
+    /// vCPU is initialized and ready to be bound to a physical CPU
     Free = 2,
-    /// The vcpu is bound to a physical CPU and ready to run.
+    /// vCPU is bound to a physical CPU and ready for execution
     Ready = 3,
-    /// The vcpu is bound to a physical CPU and running.
+    /// vCPU is currently executing on a physical CPU
     Running = 4,
-    /// The vcpu is blocked.
+    /// vCPU execution is blocked (waiting for I/O, etc.)
     Blocked = 5,
 }
 
-/// The mutable part of [`AxVCpu`].
+/// Mutable runtime state of a virtual CPU.
+///
+/// This structure contains data that changes during vCPU execution,
+/// protected by RefCell for interior mutability.
 pub struct AxVCpuInnerMut {
-    /// The state of the vcpu.
+    /// Current execution state of the vCPU
     state: VCpuState,
 }
 
-/// A virtual CPU with architecture-independent interface.
+/// Architecture-independent virtual CPU implementation.
 ///
-/// By delegating the architecture-specific operations to a struct implementing [`AxArchVCpu`], this struct provides
-/// a unified interface and state management model for virtual CPUs of different architectures.
+/// This is the main vCPU abstraction that provides a unified interface for
+/// managing virtual CPUs across different architectures. It delegates
+/// architecture-specific operations to implementations of the `AxArchVCpu` trait.
 ///
-/// The architecture-specific operations are delegated to a struct implementing [`AxArchVCpu`].
+/// # Design Principles
 ///
-/// Note that:
-/// - This struct handles internal mutability itself, almost all the methods are `&self`.
-/// - This struct is not thread-safe. It's caller's responsibility to ensure the safety.
+/// - **Interior Mutability**: Most methods take `&self` and handle mutability internally
+/// - **Thread Safety**: Not thread-safe by design - caller must ensure proper synchronization
+/// - **State Management**: Enforces strict state transitions to prevent invalid operations
+/// - **Architecture Abstraction**: Delegates arch-specific operations to `AxArchVCpu` implementations
+///
+/// # Safety
+///
+/// This struct uses `UnsafeCell` for the architecture-specific state to allow
+/// interior mutability without runtime checks, as `RefCell` guards cannot be
+/// dropped when launching a vCPU.
 pub struct AxVCpu<A: AxArchVCpu> {
-    /// The constant part of the vcpu.
+    /// Immutable vCPU configuration (VM ID, CPU affinity, etc.)
     inner_const: AxVCpuInnerConst,
-    /// The mutable part of the vcpu.
+    /// Mutable vCPU state protected by RefCell for safe interior mutability
     inner_mut: RefCell<AxVCpuInnerMut>,
-    /// The architecture-specific state of the vcpu.
+    /// Architecture-specific vCPU implementation
     ///
-    /// `UnsafeCell` is used to allow interior mutability. Note that `RefCell` or `Mutex` is not suitable here
-    /// because it's not possible to drop the guard when launching a vcpu.
+    /// Uses UnsafeCell instead of RefCell because RefCell guards cannot be
+    /// dropped during vCPU execution (when control is transferred to guest)
     arch_vcpu: UnsafeCell<A>,
 }
 
 impl<A: AxArchVCpu> AxVCpu<A> {
-    /// Create a new [`AxVCpu`].
+    /// Creates a new virtual CPU instance.
+    ///
+    /// Initializes a vCPU with the given configuration and creates the underlying
+    /// architecture-specific implementation. The vCPU starts in the `Created` state.
+    ///
+    /// # Arguments
+    ///
+    /// * `vm_id` - Unique identifier of the VM this vCPU belongs to
+    /// * `vcpu_id` - Unique identifier for this vCPU within the VM
+    /// * `favor_phys_cpu` - Physical CPU ID that should preferentially run this vCPU
+    /// * `phys_cpu_set` - Optional bitmask of allowed physical CPUs (None = no restriction)
+    /// * `arch_config` - Architecture-specific configuration for vCPU creation
+    ///
+    /// # Returns
+    ///
+    /// Returns `Ok(AxVCpu)` on success, or an error if architecture-specific creation fails.
     pub fn new(
         vm_id: VMId,
         vcpu_id: VCpuId,
@@ -88,7 +123,10 @@ impl<A: AxArchVCpu> AxVCpu<A> {
         })
     }
 
-    /// Setup the vcpu.
+    /// Sets up the vCPU for execution.
+    ///
+    /// Configures the vCPU's entry point, memory management (EPT root), and any
+    /// architecture-specific setup. Transitions the vCPU from `Created` to `Free` state.
     pub fn setup(
         &self,
         entry: GuestPhysAddr,
@@ -103,29 +141,38 @@ impl<A: AxArchVCpu> AxVCpu<A> {
         })
     }
 
-    /// Get the id of the vcpu.
+    /// Returns the unique identifier of this vCPU.
     pub const fn id(&self) -> VCpuId {
         self.inner_const.vcpu_id
     }
 
-    /// Get the id of the physical CPU who has the priority to run this vcpu.
-    /// Currently unused.
+    /// Returns the preferred physical CPU for this vCPU.
+    ///
+    /// This is used for CPU affinity optimization - the scheduler should
+    /// preferentially run this vCPU on the returned physical CPU ID.
+    ///
+    /// # Note
+    ///
+    /// Currently unused in the implementation but reserved for future
+    /// scheduler optimizations.
     pub const fn favor_phys_cpu(&self) -> usize {
         self.inner_const.favor_phys_cpu
     }
 
-    /// Get the set of physical CPUs who can run this vcpu.
-    /// If `None`, this vcpu has no limitation and can be scheduled on any physical CPU.
+    /// Returns the set of physical CPUs that can run this vCPU.
     pub const fn phys_cpu_set(&self) -> Option<usize> {
         self.inner_const.phys_cpu_set
     }
 
-    /// Get whether the vcpu is the BSP. We always assume the first vcpu (vcpu with id #0) is the BSP.
+    /// Checks if this vCPU is the Bootstrap Processor (BSP).
+    ///
+    /// By convention, the vCPU with ID 0 is always considered the BSP,
+    /// which is responsible for system initialization in multi-core VMs.
     pub const fn is_bsp(&self) -> bool {
         self.inner_const.vcpu_id == 0
     }
 
-    /// Get the state of the vcpu.
+    /// Gets the current execution state of the vCPU.
     pub fn state(&self) -> VCpuState {
         self.inner_mut.borrow().state
     }
