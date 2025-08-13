@@ -1,9 +1,9 @@
-/// Hardware abstraction layer interfaces for vCPU operations.
+/// Hardware abstraction layer interfaces for VCpu operations.
 ///
 /// This trait defines the interfaces that the underlying software (kernel or hypervisor)
-/// must implement to support vCPU operations such as interrupt handling and memory management.
+/// must implement to support VCpu operations such as interrupt handling and memory management.
 pub trait AxVCpuHal {
-    /// Memory management interfaces required by the vCPU subsystem.
+    /// Memory management interfaces required by the VCpu subsystem.
     /// Must implement the AxMmHal trait from the axaddrspace crate.
     type MmHal: axaddrspace::AxMmHal;
 

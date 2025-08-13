@@ -6,11 +6,11 @@ use axaddrspace::{
 #[allow(unused_imports)] // used in doc
 use super::AxArchVCpu;
 
-/// Reasons for virtual machine exits returned by [`AxArchVCpu::run`].
+/// Reasons for VM-Exits returned by [AxArchVCpu::run].
 ///
 /// When a guest virtual CPU executes, various conditions can cause control to be
 /// transferred back to the hypervisor. This enum represents all possible exit reasons
-/// that can occur during vCPU execution.
+/// that can occur during VCpu execution.
 ///
 /// # VM Exit Categories
 ///
@@ -130,7 +130,7 @@ pub enum AxVCpuExitReason {
         data: u64,
     },
 
-    /// An external interrupt was delivered to the vCPU.
+    /// An external interrupt was delivered to the VCpu.
     ///
     /// This represents hardware interrupts from external devices that need
     /// to be processed by the guest or hypervisor.
@@ -158,7 +158,7 @@ pub enum AxVCpuExitReason {
         access_flags: MappingFlags,
     },
 
-    /// The guest vCPU has executed a halt instruction and is now idle.
+    /// The guest VCpu has executed a halt instruction and is now idle.
     ///
     /// This typically occurs when the guest OS has no work to do and is
     /// waiting for interrupts or other events to wake it up.
@@ -191,10 +191,10 @@ pub enum AxVCpuExitReason {
         arg: u64,
     },
 
-    /// The guest vCPU has been powered down.
+    /// The guest VCpu has been powered down.
     ///
-    /// This indicates the vCPU has executed a power-down instruction or
-    /// hypercall and should be suspended. The vCPU may be resumed later.
+    /// This indicates the VCpu has executed a power-down instruction or
+    /// hypercall and should be suspended. The VCpu may be resumed later.
     CpuDown {
         /// Power state information (currently unused)
         ///
@@ -205,10 +205,10 @@ pub enum AxVCpuExitReason {
     /// The guest has requested system-wide shutdown.
     ///
     /// This indicates the entire virtual machine should be powered off,
-    /// not just the current vCPU.
+    /// not just the current VCpu.
     SystemDown,
 
-    /// No special handling required - the vCPU handled the exit internally.
+    /// No special handling required - the VCpu handled the exit internally.
     ///
     /// This provides an opportunity for the hypervisor to:
     /// - Check virtual device states
@@ -216,10 +216,10 @@ pub enum AxVCpuExitReason {
     /// - Handle background tasks
     /// - Perform scheduling decisions
     ///
-    /// The vCPU can typically be resumed immediately after these checks.
+    /// The VCpu can typically be resumed immediately after these checks.
     Nothing,
 
-    /// VM entry failed due to invalid vCPU state or configuration.
+    /// VM entry failed due to invalid VCpu state or configuration.
     ///
     /// This corresponds to `KVM_EXIT_FAIL_ENTRY` in KVM and indicates that
     /// the hardware virtualization layer could not successfully enter the guest.

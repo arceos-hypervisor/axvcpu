@@ -7,7 +7,7 @@ AxVCpu is a virtual CPU abstraction library for ArceOS hypervisors, providing a 
 ## Features
 
 - **Architecture Agnostic**: Unified interface supporting multiple architectures (x86_64, ARM64, RISC-V)
-- **State Management**: Robust vCPU lifecycle management with clear state transitions
+- **State Management**: Robust VCpu lifecycle management with clear state transitions
 - **Per-CPU Virtualization**: Efficient per-CPU state management and resource isolation  
 - **Hardware Abstraction**: Clean separation between architecture-specific and common operations
 - **CPU Affinity**: Support for CPU binding and affinity management
@@ -42,7 +42,7 @@ Created → Free → Ready → Running → Blocked
                  Invalid
 ```
 
-- **Created**: Initial state after vCPU creation
+- **Created**: Initial state after VCpu creation
 - **Free**: Initialized and ready to be bound to a physical CPU
 - **Ready**: Bound to a physical CPU and ready for execution
 - **Running**: Currently executing on a physical CPU
@@ -51,7 +51,7 @@ Created → Free → Ready → Running → Blocked
 
 ### Key Traits
 
-- `AxArchVCpu`: Architecture-specific vCPU implementation interface
+- `AxArchVCpu`: Architecture-specific VCpu implementation interface
 - `AxVCpuHal`: Hardware abstraction layer for hypervisor operations
 - `AxVCpuExitReason`: VM exit reason enumeration and handling
 
@@ -78,16 +78,16 @@ impl AxArchVCpu for MyArchVCpu {
 // Create a new virtual CPU
 let vcpu = AxVCpu::<MyArchVCpu>::new(
     vm_id,       // VM identifier
-    vcpu_id,     // vCPU identifier  
+    vcpu_id,     // VCpu identifier  
     favor_cpu,   // Preferred physical CPU
     cpu_set,     // CPU affinity mask
     config       // Architecture-specific config
 )?;
 
-// Check vCPU state
+// Check VCpu state
 assert_eq!(vcpu.state(), VCpuState::Created);
 
-// Setup the vCPU
+// Setup the VCpu
 vcpu.setup(entry_addr, ept_root, setup_config)?;
 
 // Bind to current physical CPU and run
@@ -122,7 +122,7 @@ impl AxArchVCpu for MyArchVCpu {
     type SetupConfig = MySetupConfig;
 
     fn new(vm_id: VMId, vcpu_id: VCpuId, config: Self::CreateConfig) -> AxResult<Self> {
-        // Initialize architecture-specific vCPU
+        // Initialize architecture-specific VCpu
         Ok(Self { /* ... */ })
     }
 
@@ -137,7 +137,7 @@ impl AxArchVCpu for MyArchVCpu {
     }
 
     fn setup(&mut self, config: Self::SetupConfig) -> AxResult {
-        // Complete vCPU initialization
+        // Complete VCpu initialization
         Ok(())
     }
 

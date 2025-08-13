@@ -179,9 +179,11 @@ mod tests {
 
         // Check call order
         let calls = call_log.borrow();
-        assert!(calls.contains(&"set_entry".to_string()));
-        assert!(calls.contains(&"set_ept_root".to_string()));
-        assert!(calls.contains(&"setup".to_string()));
+        assert_eq!(calls.len(), 4);
+        assert_eq!(calls[0], "new");
+        assert_eq!(calls[1], "set_entry");
+        assert_eq!(calls[2], "set_ept_root");
+        assert_eq!(calls[3], "setup");
 
         // Note: State transitions are not tested here due to percpu limitations
     }
@@ -267,6 +269,11 @@ mod tests {
 
         vcpu.set_gpr(5, 0xdeadbeef);
         vcpu.set_return_value(42);
+
+        // Check that values were actually set in the mock struct
+        let arch_vcpu = vcpu.get_arch_vcpu();
+        assert_eq!(arch_vcpu.registers[5], 0xdeadbeef);
+        assert_eq!(arch_vcpu.return_value, 42);
 
         let calls = call_log.borrow();
         assert!(calls.contains(&"set_gpr(5, 3735928559)".to_string()));
