@@ -108,6 +108,11 @@ impl<A: AxArchVCpu> AxVCpu<A> {
         self.inner_const.vcpu_id
     }
 
+    /// Get the id of the VM this vcpu belongs to.
+    pub const fn vm_id(&self) -> VMId {
+        self.inner_const.vm_id
+    }
+
     /// Get the id of the physical CPU who has the priority to run this vcpu.
     /// Currently unused.
     pub const fn favor_phys_cpu(&self) -> usize {
