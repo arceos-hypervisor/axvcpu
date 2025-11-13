@@ -1,17 +1,17 @@
 [package]
-name = "axvcpu"
-authors = ["aarkegz <aarkegz@gmail.com>"]
-version = "0.1.2"
-edition = "2024"
-categories = ["virtualization", "no-std"]
-description = "Virtual CPU abstraction for ArceOS hypervisor"
-repository = "https://github.com/arceos-hypervisor/axvcpu"
-keywords = ["vcpu", "hypervisor", "arceos"]
+authors = ["aarkegz <aarkegz@gmail.com>"] 
+categories = ["virtualization", "no-std"] 
+description = "Virtual CPU abstraction for ArceOS hypervisor" 
+edition = "2024" 
+keywords = ["vcpu", "hypervisor", "arceos"] 
 license = "GPL-3.0-or-later OR Apache-2.0 OR MulanPSL-2.0" # MulanPubL2 is not included in SPDX
+name = "axvcpu" 
+repository = "https://github.com/arceos-hypervisor/axvcpu" 
+version = "0.1.2" 
 
 [dependencies]
+axaddrspace = "0.2"
 axerrno = "0.1.0"
+axvisor_api = "0.1"
 memory_addr = "0.4"
 percpu = "0.2.0"
-axaddrspace = "0.1"
-axvisor_api = "0.1"
