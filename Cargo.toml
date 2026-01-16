@@ -10,8 +10,12 @@ keywords = ["vcpu", "hypervisor", "arceos"]
 license = "GPL-3.0-or-later OR Apache-2.0 OR MulanPSL-2.0" # MulanPubL2 is not included in SPDX
 
 [dependencies]
-axerrno = "0.1.0"
+axerrno = "0.2"
 memory_addr = "0.4"
 percpu = "0.2.0"
-axaddrspace = "0.1"
-axvisor_api = "0.1"
+axaddrspace = "0.2"
+axvisor_api = "0.2"
+
+[patch.crates-io]
+axvisor_api = { git = "https://github.com/arceos-hypervisor/axvisor_api", branch = "aar-master" }
+axaddrspace = { git = "https://github.com/arceos-hypervisor/axaddrspace", branch = "aar-master" }
