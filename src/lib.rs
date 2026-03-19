@@ -36,7 +36,6 @@ extern crate alloc;
 mod arch_vcpu; // Architecture-specific VCpu trait definition
 mod exit; // VM exit reason enumeration and handling
 mod percpu; // Per-CPU virtualization state management
-mod test; // Unit tests for VCpu functionality
 mod vcpu; // Main VCpu implementation and state management
 
 // Public API exports

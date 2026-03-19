@@ -1,6 +1,6 @@
 <h1 align="center">axvcpu</h1>
 
-<p align="center">Virtual CPU Abstraction for ArceOS Hypervisors</p>
+<p align="center">面向 ArceOS Hypervisor 的虚拟 CPU 抽象</p>
 
 <div align="center">
 
@@ -11,33 +11,33 @@
 
 </div>
 
-English | [中文](README_CN.md)
+[English](README.md) | 中文
 
 # Introduction
 
-`axvcpu` provides an architecture-independent virtual CPU abstraction for ArceOS hypervisors. It combines a common VCpu lifecycle model with a pluggable architecture-specific backend trait, making it suitable for building hypervisors across x86_64, AArch64, and RISC-V platforms in `#![no_std]` environments.
+`axvcpu` 为 ArceOS hypervisor 提供与体系结构无关的虚拟 CPU 抽象。它将统一的 VCpu 生命周期模型与可插拔的架构后端 trait 结合起来，适合在 `#![no_std]` 环境中构建面向 x86_64、AArch64 与 RISC-V 平台的 hypervisor。
 
-This library exports four core public interfaces:
+该库导出四个核心公开接口：
 
-- **`AxArchVCpu`** - Trait implemented by architecture-specific VCpu backends
-- **`AxVCpu`** - Main architecture-independent VCpu wrapper and lifecycle controller
-- **`VCpuState`** - State machine for VCpu lifecycle management
-- **`AxVCpuExitReason`** - Unified VM-exit reason enumeration returned by VCpu execution
+- **`AxArchVCpu`** - 由具体架构 VCpu 后端实现的 trait
+- **`AxVCpu`** - 与架构无关的主 VCpu 封装及生命周期控制器
+- **`VCpuState`** - 用于 VCpu 生命周期管理的状态机
+- **`AxVCpuExitReason`** - VCpu 执行返回的统一 VM-exit 原因枚举
 
-The crate also re-exports per-CPU helper utilities from its `percpu` module.
+该 crate 还重新导出了 `percpu` 模块中的每 CPU 辅助工具。
 
 ## Quick Start
 
 ### Requirements
 
-- Rust nightly toolchain
-- Rust components: rust-src, clippy, rustfmt
+- Rust nightly 工具链
+- Rust 组件：rust-src、clippy、rustfmt
 
 ```bash
-# Install rustup (if not installed)
+# 安装 rustup（如果尚未安装）
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
-# Install nightly toolchain and components
+# 安装 nightly 工具链与所需组件
 rustup install nightly
 rustup component add rust-src clippy rustfmt --toolchain nightly
 ```
@@ -45,13 +45,13 @@ rustup component add rust-src clippy rustfmt --toolchain nightly
 ### Run Check and Test
 
 ```bash
-# 1. Enter the repository
+# 1. 进入仓库目录
 cd axvcpu
 
-# 2. Code check
+# 2. 代码检查
 ./scripts/check.sh
 
-# 3. Run tests
+# 3. 运行测试
 ./scripts/test.sh
 ```
 
@@ -59,7 +59,7 @@ cd axvcpu
 
 ### Installation
 
-Add to your `Cargo.toml`:
+将以下依赖加入 `Cargo.toml`：
 
 ```toml
 [dependencies]
@@ -171,21 +171,21 @@ fn main() {
 
 ### Documentation
 
-Generate and view API documentation:
+生成并查看 API 文档：
 
 ```bash
 cargo doc --no-deps --open
 ```
 
-Online documentation: [docs.rs/axvcpu](https://docs.rs/axvcpu)
+在线文档： [docs.rs/axvcpu](https://docs.rs/axvcpu)
 
 # Contributing
 
-1. Fork the repository and create a branch
-2. Run local check: `./scripts/check.sh`
-3. Run local tests: `./scripts/test.sh`
-4. Submit PR and pass CI checks
+1. Fork 仓库并创建分支
+2. 本地运行检查：`./scripts/check.sh`
+3. 本地运行测试：`./scripts/test.sh`
+4. 提交 PR 并通过 CI 检查
 
 # License
 
-Licensed under the Apache License, Version 2.0. See [LICENSE](LICENSE) for details.
+本项目基于 Apache License 2.0 许可证发布。详见 [LICENSE](LICENSE)。
