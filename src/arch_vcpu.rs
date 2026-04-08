@@ -88,6 +88,9 @@ pub trait AxVcpuAccessGuestState {
     fn ept_pointer(&self) -> EPTPointer;
     // Set the EPT pointer.
     fn set_ept_pointer(&mut self, eptp: EPTPointer) -> AxResult;
+    /// Enable or disable conversion of eligible EPT violations into #VE and
+    /// update the VMCS pointer to the shared #VE information area.
+    fn set_ept_violation_ve(&mut self, enable: bool, ve_info_hpa: HostPhysAddr) -> AxResult;
     fn eptp_list_region(&self) -> HostPhysAddr;
 
     fn dump(&self);
