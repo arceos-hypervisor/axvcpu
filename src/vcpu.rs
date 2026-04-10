@@ -98,10 +98,15 @@ impl<A: AxArchVCpu> AxVCpu<A> {
         })
     }
 
-    pub fn setup_from_context(&self, ept_root: HostPhysAddr, ctx: A::HostContext) -> AxResult {
+    pub fn setup_from_context(
+        &self,
+        ept_root: HostPhysAddr,
+        ctx: A::HostContext,
+        enable_ve: bool,
+    ) -> AxResult {
         self.manipulate_arch_vcpu(VCpuState::Created, VCpuState::Free, |arch_vcpu| {
             arch_vcpu.set_ept_root(ept_root)?;
-            arch_vcpu.setup_from_context(ctx)?;
+            arch_vcpu.setup_from_context(ctx, enable_ve)?;
             Ok(())
         })
     }

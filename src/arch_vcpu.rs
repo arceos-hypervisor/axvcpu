@@ -39,7 +39,10 @@ pub trait AxArchVCpu: Sized + AxVcpuAccessGuestState {
     fn setup(&mut self, config: Self::SetupConfig) -> AxResult;
 
     /// Setup the vcpu from a pre-constructed `HostContext` structure.
-    fn setup_from_context(&mut self, config: Self::HostContext) -> AxResult;
+    ///
+    /// `enable_ve` controls whether convertible EPT violations should be
+    /// delivered through #VE instead of the traditional VM-Exit path.
+    fn setup_from_context(&mut self, config: Self::HostContext, enable_ve: bool) -> AxResult;
 
     /// Run the vcpu until a vm-exit occurs.
     fn run(&mut self) -> AxResult<AxVCpuExitReason>;
@@ -88,9 +91,9 @@ pub trait AxVcpuAccessGuestState {
     fn ept_pointer(&self) -> EPTPointer;
     // Set the EPT pointer.
     fn set_ept_pointer(&mut self, eptp: EPTPointer) -> AxResult;
-    /// Enable or disable conversion of eligible EPT violations into #VE and
-    /// update the VMCS pointer to the shared #VE information area.
-    fn set_ept_violation_ve(&mut self, enable: bool, ve_info_hpa: HostPhysAddr) -> AxResult;
+    /// Get the physical address of the shared #VE information area.
+    fn get_ve_information_area(&self) -> HostPhysAddr;
+
     fn eptp_list_region(&self) -> HostPhysAddr;
 
     fn dump(&self);
